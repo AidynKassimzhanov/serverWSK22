@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+    <h1>Games</h1>
+    <% games.map(item => { %>
+        <div class="adminPanel"> 
+            <!-- <span><%=item.game.title %></span> -->
+            <a href="/game/<%=item.game.slug %>"><%=item.game.title %></a>
+            <span><%=item.user.username %></span>
+            <form action="/game/<%=item.game.id %>" method="post">
+                <% if(item.game.deleted_reason==='') { %>
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Block"
+                    >
+                <% } else { %>
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Unblock"
+                    >
+                <% } %>
+            </form>
+
+        </div>
+    <% }) %>
+</body>
+</html>

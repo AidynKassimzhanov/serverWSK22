@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+    <h1>Admins</h1>
+    <% admins.map(admin => { %>
+        <div class="adminPanel"> 
+            <span><%=admin.username %></span>
+            <span><%=admin.createdAt.toISOString().slice(0, 19).replace('T', ' ') %></span>
+            <span><%=admin.updatedAt.toISOString().slice(0, 19).replace('T', ' ') %></span>
+
+        </div>
+    <% }) %>
+</body>
+</html>

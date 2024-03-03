@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include("partials/head.ejs") %>
+<body>
+    <%- include("partials/header.ejs") %>
+    <h1>Game - <%=game.title %></h1>
+
+    <div class="gameInformation">
+        <div class="infHead"> 
+            <span> Title </span>
+            <%=game.title %>
+        </div>
+
+        <div class="infHead"> 
+            <span> Description </span>
+            <%=game.description %>
+        </div>
+
+        <div class="infHead"> 
+            <span> Author </span>
+            <%=user.username %>
+        </div>
+
+        <div class="infHead versions"> 
+            <div class="versionsTitle"> Versions </div>
+            <div class="versionsList">
+                <ol>
+                    <% versions.map(version => { %>
+                        <li><%=version.pathToGameFiles %>  <%=version.createdAt.toISOString().slice(0, 19).replace('T', ' ') %></li>
+                    <% }) %>
+                </ol>
+            </div>
+            <!-- <%=user.username %> -->
+        </div>
+    </div>
+   
+</body>
+</html>

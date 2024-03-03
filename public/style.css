@@ -1,0 +1,113 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+.containerForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.containerForm form {
+    width: 500px;
+    height: 300px;
+    font-size: 20px;
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.form input, .form button  {
+    font-size: 20px;
+    padding: 5px;
+    margin: 10px 0;
+    border-radius: 5px;
+}
+
+.form button {
+    background: darkslateblue;
+    color: white;
+    margin-top: 20px;
+    transition: background 0.5s ease;
+    transform: scaleY(1.1);
+}
+
+.form button:hover {
+    background: cornflowerblue;
+}
+
+/* --------------------------------------------------- */
+
+h1 {
+    margin: 20px;
+    text-align: center;
+}
+
+.adminPanel {
+    display: block;
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.5);
+    margin: 10px;
+    padding: 5px;
+}
+
+.adminPanel form{
+    display: inline-flex;
+}
+
+.adminPanel input,
+.adminPanel button {
+    height: 80%;
+    padding: 5px;
+    margin: auto 20px
+}
+
+header a {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 5px;
+    margin: 10px
+}
+
+.adminPanel a {
+    font-size: 20px;
+    text-decoration: none;
+    margin-right: 20px;
+    /* color: black */
+}
+
+.adminPanel span {
+    display: inline-block;
+    min-width: 150px;
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+.gameInformation {
+    padding: 20px;
+    font-size: 20px;
+}
+
+.gameInformation .infHead {
+    margin: 20px;
+}
+
+.gameInformation .versions {
+    display: flex;
+}
+
+.gameInformation .infHead span {
+    display: inline-block;
+    width: 200px;
+    font-weight: 600;
+}
+
+.gameInformation .versionsTitle {
+    margin-top: 10px;
+    width: 200px;
+    font-weight: 600;
+} 
+
+.gameInformation .versionsList div {
+    margin: 10px 0;
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include("partials/header.ejs") %>
+    <h1>Users</h1>
+    <% users.map(user => { %>
+        <div class="adminPanel"> 
+            <span><%=user.username %></span>
+            <span><%=user.createdAt.toISOString().slice(0, 19).replace('T', ' ') %></span>
+            <span><%=user.updatedAt.toISOString().slice(0, 19).replace('T', ' ') %></span>
+            <form action="/users/<%=user.id %>/lock" method="POST">
+                <!-- <%= %> -->
+                <% if(user.deleted_reason !== '') { %>
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Unlock"
+                    >
+                <% } else { %>
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Spamming"
+                    >
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Cheating"
+                    >
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Other"
+                    >
+                <% }%>
+            </form>
+        </div>
+        
+    <% }) %>
+</body>
+</html>
