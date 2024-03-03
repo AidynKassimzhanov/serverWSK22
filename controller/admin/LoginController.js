@@ -9,7 +9,7 @@ const Login = async (req, res) => {
 
     if (!req.body) return res.json("error")
     // console.log(req.body);
-    const userS = req.session.user;
+    // const userS = req.session.user;
     const { username, password } = req.body
     
     const user = await AdminUser.findOne({where: { username: username}})
@@ -20,8 +20,11 @@ const Login = async (req, res) => {
     req.session.user = { username: username, password: password };
 
     res.redirect("/admin/users")
-
-    // res.render("adminUsers")
 }
 
-module.exports = { Index, Login }
+const Logout = async (req, res) => {
+    req.session.destroy(); // Уничтожаем сессию пользователя при выходе
+    res.redirect("/admin")
+}
+
+module.exports = { Index, Login, Logout }

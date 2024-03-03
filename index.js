@@ -7,6 +7,7 @@ const sessionConfig = require('./session');
 
 const addInitialData = require('./initialData');
 const adminRouter = require('./routes');
+const apiRouter = require('./APIroutes');
 
 
 const PORT = 5000
@@ -21,6 +22,7 @@ app.set("view engine", "ejs");
 
 app.use(sessionConfig);
 
+app.use('/api', apiRouter);
 app.use('/', adminRouter); 
 
 const start = async () => {
