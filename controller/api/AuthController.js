@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { PlatformUser } = require('../../models/db');
+const { PlatformUser, Token } = require('../../models/db');
 
 
 const SignIn = async (req, res) => {
@@ -10,6 +10,7 @@ const SignIn = async (req, res) => {
     if (user && user.username === username && user.password === password) {
         // Генерация токена
         const token = jwt.sign({ username: req.body.username }, 'secret', { expiresIn: '1h' });
+        await Token.create({token: token})
         // Отправка токена в ответе
         res.status(200).json({ status: 'success', token });
     } else {
@@ -27,6 +28,7 @@ const SignUp = async (req, res) => {
     try {
         const user = await PlatformUser.create({ username: username, password: password})
         const token = jwt.sign({ username: username }, 'secret', { expiresIn: '1h' });
+        await Token.create({token: token})
         res.status(201).json({ status: 'success', token });
     }
     catch (error) {
@@ -35,8 +37,17 @@ const SignUp = async (req, res) => {
 }
 
 const SignOut = async (req, res) => {
-    const users = await PlatformUser.findAll()
-    res.json({users: users})
+    const token = req.headers.authorization.split(' ')[1];
+
+    try {
+        // Удаляем токен из базы данных или помечаем его как недействительный
+        await Token.destroy({ where: { token: token } });
+        
+        res.status(200).json({ status: 'success', message: 'Signed out successfully' });
+    } catch (error) {
+        console.error('Error during sign out:', error);
+        res.status(500).json({ status: 'error', message: 'Internal server error' });
+    }
 }
 
 module.exports = { SignIn, SignUp, SignOut }

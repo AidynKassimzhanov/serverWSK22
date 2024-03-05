@@ -93,6 +93,15 @@ const PlatformUser = sequelize.define('PlatformUser', {
 });
 
 
+const Token = sequelize.define('AccessToken', {
+  token: {
+      type: Sequelize.STRING,
+      allowNull: false,
+  }, 
+}, {
+timestamps: true, // Устанавливаем свое собственное имя для поля удаления
+});
+
 GameScore.belongsTo(PlatformUser);
 Game.belongsTo(PlatformUser)
 Game.hasMany(GameVersion);
@@ -124,4 +133,4 @@ const connectToDB = async () => {
 
 
 
-module.exports = {sequelize, connectToDB, AdminUser, Game, GameScore, GameVersion, PlatformUser} 
+module.exports = {sequelize, connectToDB, AdminUser, Game, GameScore, GameVersion, PlatformUser, Token} 
