@@ -1,5 +1,5 @@
 const sequelize = require("sequelize")
-const { Game, PlatformUser } = require("../../models/db")
+const { Game, PlatformUser, GameScore, GameVersion } = require("../../models/db")
 const slugify = require('slugify');
 const jwt = require('jsonwebtoken');
 
@@ -59,7 +59,56 @@ const GameCreate = async (req, res) => {
     } catch (err) {
         return res.status(400).json({"error": err})
     } 
-
 }
 
-module.exports = {Games, GameCreate}
+const GameGet = async (req, res) => {
+    const slug = req.params.slug
+
+    try {
+        const game = await Game.findOne({ 
+            where: { slug: slug }, 
+            include: [
+                { model: PlatformUser }, 
+                { 
+                    model: GameVersion, 
+                    include: [GameScore] 
+                }
+            ] 
+        })
+    
+        let totalScore = 0;
+        let lastVersion = {pathToGameFiles: "/dfsdfs"}
+
+        if (game && game.GameVersions) {
+            lastVersion = game.GameVersions[0]
+            for (const version of game.GameVersions) {
+                if (parseInt(version.version.slice(1)) > parseInt(lastVersion.version.slice(1))) {
+                    lastVersion = version
+                }
+                if (version.GameScores) {
+                    for (const score of version.GameScores) {
+                        totalScore += score.score;
+                    }
+                }
+            }
+        }
+        console.log(lastVersion);
+    
+        return res.status(201).json({
+            "slug": game.slug,
+            "title": game.title,
+            "description": game.description,
+            "thumbnail": game.thumbnail,
+            "uploadTimestamp": game.cretedAt,
+            "author": game.PlatformUser.username,
+            "scoreCount": totalScore || null,
+            "gamePath": lastVersion.pathToGameFiles || null
+        })
+    } catch (err) {
+        return res.status(400).json({"error": err})
+    } 
+
+    
+}
+
+module.exports = {Games, GameCreate, GameGet}

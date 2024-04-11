@@ -29,6 +29,10 @@ const GameVersion = sequelize.define('GameVersion', {
       type: Sequelize.STRING,
       allowNull: false,
     },
+    version: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
   },{
     timespamps: true,
   }
