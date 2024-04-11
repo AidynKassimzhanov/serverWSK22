@@ -5,6 +5,18 @@ const { PlatformUser, Token } = require('../../models/db');
 const SignIn = async (req, res) => {
     const {username, password} = req.body
 
+    try {
+        // Получаем все просроченные токены из базы данных
+        const expiredTokens = await Token.findAll({ where: { expirationDate: { [Op.lt]: new Date() } } });
+        
+        // Удаляем просроченные токены из базы данных
+        await Token.destroy({ where: { id: expiredTokens.map(token => token.id) } });
+
+        console.log('Удалено', expiredTokens.length, 'просроченных токенов');
+    } catch (error) {
+        console.error('Ошибка при удалении просроченных токенов:', error);
+    }
+
     const user = await PlatformUser.findOne({where: { username: username}})
 
     if (user && user.username === username && user.password === password) {

@@ -15,14 +15,10 @@ adminRouter.route('/admin')
 
 
 adminRouter.use('/', requireLogin)
-
 adminRouter.get('/admin/logout', Logout)
-
 adminRouter.get('/admin/users', AdminUsers)
-
 adminRouter.get('/users', Users)
 adminRouter.post('/users/:id/lock', Lock)
-
 adminRouter.get('/game', Games)
 adminRouter.post('/game/:id', DeleteGame)
 adminRouter.get('/game/:slug', ShowGame)

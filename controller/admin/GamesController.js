@@ -23,9 +23,9 @@ const DeleteGame = async (req, res) => {
     const id = req.params.id
     const {reason} = req.body
 
-    const game = await Game.findOne({where: {id: id}})
+    // const game = await Game.findOne({where: {id: id}})
 
-    game.deleted_reason === '' 
+    reason === 'Block' 
         ? await Game.update({deleted_reason: 'deleted'}, {where: {id: id}})
         : await Game.update({deleted_reason: '' }, {where: {id: id}})
 

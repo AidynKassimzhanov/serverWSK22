@@ -23,8 +23,11 @@ const verifyToken = async (req, res, next) => {
         // Если токен валиден и не аннулирован, пропускаем запрос дальше
         next();
     } catch (error) {
-        console.error('Ошибка верификации токена:', error);
-        return res.status(403).json({ message: 'Ошибка верификации токена' });
+        if (error.name === 'TokenExpiredError') {
+            // Токен истек, удаляем его из базы данных
+            await Token.destroy({ where: { token: token } });
+            return res.status(403).json({ message: 'Токен истек' });
+        }
     }
 };
 

@@ -10,17 +10,17 @@
             <a href="/game/<%=item.game.slug %>"><%=item.game.title %></a>
             <span><%=item.user.username %></span>
             <form action="/game/<%=item.game.id %>" method="post">
-                <% if(item.game.deleted_reason==='') { %>
+                <% if(item.game.deleted_reason === 'deleted') { %>
                     <input 
                         type="submit" 
                         name="reason" 
-                        value="Block"
+                        value="Unblock"
                     >
                 <% } else { %>
                     <input 
                         type="submit" 
                         name="reason" 
-                        value="Unblock"
+                        value="Block"
                     >
                 <% } %>
             </form>

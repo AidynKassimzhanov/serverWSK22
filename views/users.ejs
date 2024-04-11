@@ -11,13 +11,7 @@
             <span><%=user.updatedAt.toISOString().slice(0, 19).replace('T', ' ') %></span>
             <form action="/users/<%=user.id %>/lock" method="POST">
                 <!-- <%= %> -->
-                <% if(user.deleted_reason !== '') { %>
-                    <input 
-                        type="submit" 
-                        name="reason" 
-                        value="Unlock"
-                    >
-                <% } else { %>
+                <% if(user.deleted_reason === '' || user.deleted_reason === null) { %>
                     <input 
                         type="submit" 
                         name="reason" 
@@ -32,6 +26,13 @@
                         type="submit" 
                         name="reason" 
                         value="Other"
+                    >
+                    
+                <% } else { %>
+                    <input 
+                        type="submit" 
+                        name="reason" 
+                        value="Unlock"
                     >
                 <% }%>
             </form>

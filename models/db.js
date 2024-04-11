@@ -102,13 +102,16 @@ const Token = sequelize.define('AccessToken', {
 timestamps: true, // Устанавливаем свое собственное имя для поля удаления
 });
 
-GameScore.belongsTo(PlatformUser);
+GameScore.belongsTo(PlatformUser)
+PlatformUser.hasMany(GameScore)
+
 Game.belongsTo(PlatformUser)
-Game.hasMany(GameVersion);
-PlatformUser.hasMany(GameScore);
+PlatformUser.hasMany(Game)
+
+Game.hasMany(GameVersion)
+GameVersion.belongsTo(Game)
 
 GameScore.belongsTo(GameVersion)
-GameVersion.belongsTo(Game)
 GameVersion.hasMany(GameScore)
 
 
@@ -121,7 +124,7 @@ const connectToDB = async () => {
       await sequelize.authenticate();
       console.log('Соединение установлено успешно.');
 
-      // await sequelize.sync({ alter: true });
+      await sequelize.sync({ alter: true });
       // await sequelize.sync();
       console.log('Синхронизировано!.');
       
