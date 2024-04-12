@@ -131,6 +131,7 @@ const GameUpload = async (req, res) => {
 
         const folderPath = req.folderPath + '/' 
 
+        //Разархивирование файла
         try {
             await fs.createReadStream(req.file.path)
                 .pipe(unzipper.Extract({ path: folderPath }))
@@ -139,11 +140,10 @@ const GameUpload = async (req, res) => {
             console.error('ZIP file extraction fails:', err);
         }
 
-        
-        
-        // console.log(req.file.path);
+
         const filename = req.folderPath + '/' + req.file.originalname
 
+        // Удаление zip файла
         fs.unlink(filename, (err) => {
             if (err) {
                 console.error('Unspecified IO error:', err);
@@ -152,10 +152,35 @@ const GameUpload = async (req, res) => {
             console.log('Файл успешно удален:', filename);
             });        
 
-        return res.status(201).json({"game": game})
+        return res.status(201).json({"status": "Upload successful"})
     } catch (err) {
         return res.status(400).json({"error Game Upload": err})
     }
 }        
 
-module.exports = {Games, GameCreate, GameGet, GameUpload}
+const GameUpdate = async (req, res) => {
+    const slug = req.params.slug
+    const { title, description } = req.body
+    console.log(title, description);
+    // console.log(req.userId);
+    try {
+        const game = await Game.findOne({ 
+            where: { slug: slug }, 
+            include: [ PlatformUser ] 
+        })
+
+        if (game && game.PlatformUser.id !== req.userId) {
+            return res.status(400).json({"error": "User is not author of the game"})
+        }
+
+        game.title = title
+        game.description = description
+        await game.save()
+
+        return res.status(204).json({"Status": "Update success"})
+    } catch (err) {
+        return res.status(400).json({"error Game Update": err})
+    }
+}
+
+module.exports = {Games, GameCreate, GameGet, GameUpload, GameUpdate}

@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
 
     const gameFolderPath = path.join('uploads/', slug);
 
+    //Создает главную папку с игрой и версиями
     fs.mkdir(gameFolderPath, { recursive: true }, (err) => {
         if (err) {
           console.error('Ошибка при создании папки:', err);
@@ -20,12 +21,14 @@ const storage = multer.diskStorage({
         console.log('Папка успешно создана:', gameFolderPath);
     });
 
+    // Ищет в папке с игрой последнюю версию и создает папку последней версии
     fs.readdir(gameFolderPath, (err, files) => {
         if (err) {
           console.error('Ошибка чтения содержимого папки с игрой:', err);
           return;
         } 
         console.log('Содержимое папки с игрой:', files);
+        
         
         let folderPath = ''
         if (files.length === 0) {
@@ -51,11 +54,9 @@ const storage = multer.diskStorage({
     })
 
 },
-  filename: function (req, file, cb) {
-
-    cb(null, file.originalname)
-    // console.log(req.folderPath);
-
+    // сохранение файла
+    filename: function (req, file, cb) {
+        cb(null, file.originalname)
   }
 })
 
