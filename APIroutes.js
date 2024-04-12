@@ -2,7 +2,7 @@ const Router = require('express');
 const { Users } = require('./controller/api/UserController');
 const { SignIn, SignUp, SignOut } = require('./controller/api/AuthController');
 const verifyToken = require('./controller/api/jwtVerifyMiddleware');
-const { Games, GameCreate, GameGet, GameUpload, GameUpdate, GameServe } = require('./controller/api/GameController');
+const { Games, GameCreate, GameGet, GameUpload, GameUpdate, GameServe, GameDelete } = require('./controller/api/GameController');
 const apiRouter = new Router()
 
 const multer = require('multer');
@@ -26,5 +26,6 @@ apiRouter.get('/games/:slug', GameGet)
 apiRouter.post('/games/:slug/upload', upload.single('zipfile'), GameUpload)
 apiRouter.get('/games/:slug/:version', GameServe)
 apiRouter.put('/games/:slug', GameUpdate)
+apiRouter.delete('/games/:slug', GameDelete)
 
 module.exports = apiRouter

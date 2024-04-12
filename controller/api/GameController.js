@@ -1,9 +1,11 @@
-const sequelize = require("sequelize")
 const { Game, PlatformUser, GameScore, GameVersion } = require("../../models/db")
 const slugify = require('slugify');
 const jwt = require('jsonwebtoken');
 const path = require('path');
+const fs = require('fs');
+const unzipper = require('unzipper');
 
+// ************* Game Show All *************************************************************************************************************
 const Games = async (req, res) => {
     
     try {
@@ -29,9 +31,9 @@ const Games = async (req, res) => {
     } catch (err) {
         res.json({"error": err})
     }
-
 }
 
+// ************* Game Create *************************************************************************************************************
 const GameCreate = async (req, res) => {
     const {title, description} = req.body
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
@@ -56,6 +58,7 @@ const GameCreate = async (req, res) => {
     } 
 }
 
+// ************* Game Show One *************************************************************************************************************
 const GameGet = async (req, res) => {
     const slug = req.params.slug
 
@@ -104,9 +107,70 @@ const GameGet = async (req, res) => {
     } 
 }
 
-const fs = require('fs');
-const unzipper = require('unzipper');
+// ************* Game Update *************************************************************************************************************
+const GameUpdate = async (req, res) => {
+    const slug = req.params.slug
+    const { title, description } = req.body
+    // console.log(title, description);
+    // console.log(req.userId);
+    try {
+        const game = await Game.findOne({ 
+            where: { slug: slug }, 
+            include: [ PlatformUser ] 
+        })
 
+        if (game && game.PlatformUser.id !== req.userId) {
+            return res.status(403).json({
+                "status": "forbidden",
+                "error": "You are not the game author"
+            })
+        }
+
+        game.title = title
+        game.description = description
+        await game.save()
+
+        return res.status(204).json({"Status": "Update success"})
+    } catch (err) {
+        return res.status(400).json({"error Game Update": err})
+    }
+}
+
+// ************* Game Delete *************************************************************************************************************
+const GameDelete = async (req, res) => {
+    const { slug } = req.params
+    try {
+        const game = await Game.findOne({ 
+            where: { slug: slug }, 
+            include: [ PlatformUser ] 
+        })
+
+        if (game && game.PlatformUser.id !== req.userId) {
+            return res.status(403).json({
+                "status": "forbidden",
+                "error": "You are not the game author"
+            })
+        }
+
+        game.destroy()
+
+        return res.status(204).json()
+    } catch (err) {
+        return res.status(400).json({"error Game Update": err})
+    }
+}
+
+// ************* Game File Get for Play *************************************************************************************************************
+const GameServe = async (req, res) => {
+    const { slug, version } = req.params
+
+    const rootDir = path.resolve(__dirname, '../..');
+    console.log(rootDir);
+
+    res.sendFile(path.join(rootDir, 'uploads', slug, version, 'index.html'));
+}
+
+// ************* Gmae file upload *************************************************************************************************************
 const GameUpload = async (req, res) => {
     const slug = req.params.slug
     // console.log(req.userId);
@@ -151,40 +215,14 @@ const GameUpload = async (req, res) => {
     } catch (err) {
         return res.status(400).json({"error Game Upload": err})
     }
-}        
+}  
 
-const GameUpdate = async (req, res) => {
-    const slug = req.params.slug
-    const { title, description } = req.body
-    // console.log(title, description);
-    // console.log(req.userId);
-    try {
-        const game = await Game.findOne({ 
-            where: { slug: slug }, 
-            include: [ PlatformUser ] 
-        })
-
-        if (game && game.PlatformUser.id !== req.userId) {
-            return res.status(400).json({"error": "User is not author of the game"})
-        }
-
-        game.title = title
-        game.description = description
-        await game.save()
-
-        return res.status(204).json({"Status": "Update success"})
-    } catch (err) {
-        return res.status(400).json({"error Game Update": err})
-    }
+module.exports = {
+    Games, 
+    GameCreate, 
+    GameGet, 
+    GameUpload, 
+    GameUpdate, 
+    GameServe, 
+    GameDelete
 }
-
-const GameServe = async (req, res) => {
-    const {slug, version} = req.params
-
-    const rootDir = path.resolve(__dirname, '../..');
-    console.log(rootDir);
-
-    res.sendFile(path.join(rootDir, 'uploads', slug, version, 'index.html'));
-}
-
-module.exports = {Games, GameCreate, GameGet, GameUpload, GameUpdate, GameServe}
