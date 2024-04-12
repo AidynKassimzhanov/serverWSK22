@@ -2,6 +2,7 @@ const sequelize = require("sequelize")
 const { Game, PlatformUser, GameScore, GameVersion } = require("../../models/db")
 const slugify = require('slugify');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const Games = async (req, res) => {
     
@@ -12,12 +13,6 @@ const Games = async (req, res) => {
         size = parseInt(size)
 
         const games = await Game.findAll({
-            // attributes: {
-            //     include: [
-            //         // Подзапрос для вычисления общей суммы очков по каждой игре
-            //         [sequelize.literal('(SELECT SUM(`totalPoints`) FROM `GameScores` WHERE `ScoreGames`.`GameId` = `Game`.`id`)'), 'totalScore']
-            //     ]
-            // },
             offset: (page - 1) * size, // Смещение для страницы
             limit: size, // Размер страницы
             order: [[sortBy, sortDir.toUpperCase()]] // Сортировка и направление сортировки
@@ -161,7 +156,7 @@ const GameUpload = async (req, res) => {
 const GameUpdate = async (req, res) => {
     const slug = req.params.slug
     const { title, description } = req.body
-    console.log(title, description);
+    // console.log(title, description);
     // console.log(req.userId);
     try {
         const game = await Game.findOne({ 
@@ -183,4 +178,13 @@ const GameUpdate = async (req, res) => {
     }
 }
 
-module.exports = {Games, GameCreate, GameGet, GameUpload, GameUpdate}
+const GameServe = async (req, res) => {
+    const {slug, version} = req.params
+
+    const rootDir = path.resolve(__dirname, '../..');
+    console.log(rootDir);
+
+    res.sendFile(path.join(rootDir, 'uploads', slug, version, 'index.html'));
+}
+
+module.exports = {Games, GameCreate, GameGet, GameUpload, GameUpdate, GameServe}
