@@ -13,14 +13,14 @@ const verifyToken = async (req, res, next) => {
     try {
         // Проверяем токен на валидность
         const decoded = jwt.verify(token, 'secret');
-
+        // console.log(decoded);
         // Проверяем, не аннулирован ли токен
         const isTokenValid = await Token.findOne({ where: { token: token } });
         if (!isTokenValid) {
             return res.status(403).json({ message: 'Токен недействителен' });
         }
-
-        // Если токен валиден и не аннулирован, пропускаем запрос дальше
+        // console.log(decoded);
+        req.userId = decoded.userId;
         next();
     } catch (error) {
         if (error.name === 'TokenExpiredError') {

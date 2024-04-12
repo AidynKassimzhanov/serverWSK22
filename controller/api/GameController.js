@@ -92,7 +92,7 @@ const GameGet = async (req, res) => {
                 }
             }
         }
-        console.log(lastVersion);
+        // console.log(lastVersion);
     
         return res.status(201).json({
             "slug": game.slug,
@@ -107,8 +107,55 @@ const GameGet = async (req, res) => {
     } catch (err) {
         return res.status(400).json({"error": err})
     } 
-
-    
 }
 
-module.exports = {Games, GameCreate, GameGet}
+const fs = require('fs');
+const unzipper = require('unzipper');
+
+const GameUpload = async (req, res) => {
+    const slug = req.params.slug
+    // console.log(req.userId);
+    try {
+        const game = await Game.findOne({ 
+            where: { slug: slug }, 
+            include: [ PlatformUser ] 
+        })
+
+        if (game && game.PlatformUser.id !== req.userId) {
+            return res.status(400).json({"error": "User is not author of the game"})
+        }
+
+        if (!req.file) {
+            return res.status(400).send('Unspecified IO error.');
+        }
+
+        const folderPath = req.folderPath + '/' 
+
+        try {
+            await fs.createReadStream(req.file.path)
+                .pipe(unzipper.Extract({ path: folderPath }))
+                .promise();
+        } catch (err) {
+            console.error('ZIP file extraction fails:', err);
+        }
+
+        
+        
+        // console.log(req.file.path);
+        const filename = req.folderPath + '/' + req.file.originalname
+
+        fs.unlink(filename, (err) => {
+            if (err) {
+                console.error('Unspecified IO error:', err);
+                return;
+            }
+            console.log('Файл успешно удален:', filename);
+            });        
+
+        return res.status(201).json({"game": game})
+    } catch (err) {
+        return res.status(400).json({"error Game Upload": err})
+    }
+}        
+
+module.exports = {Games, GameCreate, GameGet, GameUpload}

@@ -21,7 +21,7 @@ const SignIn = async (req, res) => {
 
     if (user && user.username === username && user.password === password) {
         // Генерация токена
-        const token = jwt.sign({ username: req.body.username }, 'secret', { expiresIn: '1h' });
+        const token = jwt.sign({ username: req.body.username, userId: user.id }, 'secret', { expiresIn: '1h' });
         await Token.create({token: token})
         // Отправка токена в ответе
         res.status(200).json({ status: 'success', token });

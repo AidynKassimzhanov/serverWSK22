@@ -9,6 +9,8 @@ const addInitialData = require('./initialData');
 const adminRouter = require('./routes');
 const apiRouter = require('./APIroutes');
 
+// const multer = require('multer');
+// const upload = multer({ dest: 'uploads/' });
 
 const PORT = 5000
 
